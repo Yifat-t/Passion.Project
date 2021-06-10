@@ -1,0 +1,21 @@
+﻿@model passionP.Models.BrandDto
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Update Brand</h2>
+<form action="/Brand/Update/@Model.BrandID" method="POST">
+    <div style="display:none;">
+        @* Pass through the Brand ID *@
+        <input type="text" name="BrandID" value="@Model.BrandID" />
+    </div>
+    <div>
+        <label>Name:</label> <input type="text" name="BrandName" value="@Model.BrandName" />
+    </div>
+    
+    <div>
+        <input type="submit" value="Update Brand" />
+
+    </div>
+</form>

@@ -1,0 +1,14 @@
+﻿@model IEnumerable<passionP.Models.BrandDto>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List of Brands</h2>
+<a href="/Brand/New">New Brand</a>
+@foreach (var Brand in Model)
+{
+    <h2><a href="/Brand/Details/@Brand.BrandID">@Brand.BrandName</a></h2>
+   
+
+}
+

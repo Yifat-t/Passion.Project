@@ -1,0 +1,32 @@
+﻿@model passionP.Models.ViewModels.DetailsBrand
+
+
+@{
+    ViewBag.Title = "View";
+}
+
+<a href="/Brand/List">Go back to list</a>
+<br />
+<a href="/Brand/Edit/@Model.SelectedBrand.BrandID">Update</a>
+<br />
+<a style="color:#ab2020;" href="/Brand/DeleteConfirm/@Model.SelectedBrand.BrandID">Delete</a>
+<h2>Name:  @Model.SelectedBrand.BrandName</h2>
+<h2>ID: @Model.SelectedBrand.BrandID</h2>
+
+
+
+<div style="margin-top:100px;">
+    <h3>Products related to this brand</h3>
+    @foreach (var product in Model.RelatedProducts)
+    {
+        <a href="/Product/Details/@product.ProductID">@product.ProductName</a>
+        
+        if (@product.Discontinued)
+        {
+            <span> Discontinued</span>
+        }
+        <br />
+
+
+    }
+</div>

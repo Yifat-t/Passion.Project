@@ -1,0 +1,41 @@
+﻿@model passionP.Models.ViewModels.DetailsProduct
+@{
+    ViewBag.Title = "View";
+}
+<a href="/Product/List">Go Back To List</a>
+
+<a href="/Product/Edit/@Model.SelectedProduct.ProductID">Update</a>
+
+<a style="color:#ab2020;" href="/Product/DeleteConfirm/@Model.SelectedProduct.ProductID">Delete</a>
+<h2>Product: @Model.SelectedProduct.ProductName</h2>
+<div>Brand: @Model.SelectedProduct.BrandName</div>
+<div>Discontinued: @Model.SelectedProduct.Discontinued</div>
+
+
+
+<div>
+    <h2>Retailers Responsible for @Model.SelectedProduct.ProductName:</h2>
+    @foreach (var retailer in Model.ResponsibleRetailers)
+    {
+
+        <a href="/Retailer/Details/@retailer.RetailerID">@retailer.RetailerName </a> <a style="color:#ab2020;" href="/Product/Unassociate/@Model.SelectedProduct.ProductID?RetailerID=@retailer.RetailerID">[x]</a><br />
+    }
+
+    <div>
+        <h4>Add new Retailer that sell this product @Model.SelectedProduct.ProductName</h4>
+        <form method="POST" action="/Product/Associate/@Model.SelectedProduct.ProductID">
+            <select name="RetailerID">
+                @foreach (var retailer in Model.AvailableRetailers)
+                {
+                    <option value="@retailer.RetailerID">@retailer.RetailerName </option>
+                }
+
+            </select>
+            <input type="submit" value="Associate Retailer" />
+        </form>
+    </div>
+</div>
+
+
+
+
