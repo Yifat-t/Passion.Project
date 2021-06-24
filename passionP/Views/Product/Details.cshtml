@@ -5,11 +5,14 @@
 <h2>Product: @Model.SelectedProduct.ProductName</h2>
 <nav>
     <ul>
-        <div><a href="/Product/List">Go Back To List</a></div>
+        
+        <div><button type="button" class="btn btn-primary"><a style="color:white;" href="/Product/List">Go Back To List</a></button></div>
+        <br />
 
-        <div><a href="/Product/Edit/@Model.SelectedProduct.ProductID">Update</a></div>
+        <div><button type="button" class="btn btn-success"><a style="color:white;" href="/Product/Edit/@Model.SelectedProduct.ProductID">Update</a></button></div>
+        <br />
 
-        <div><a style="color:#ab2020;" href="/Product/DeleteConfirm/@Model.SelectedProduct.ProductID">Delete</a></div>
+        <div><button type="button" class="btn btn-danger"><a style="color:white;" href="/Product/DeleteConfirm/@Model.SelectedProduct.ProductID">Delete</a></button></div>
     </ul>
 </nav>
 <div class="row">
@@ -28,12 +31,12 @@
 
 
     <div class="col-md-6 col-sm-12">
-        <h2>Retailers Responsible for @Model.SelectedProduct.ProductName:</h2>
+        <h2>Retailers selling @Model.SelectedProduct.ProductName:</h2>
         @foreach (var retailer in Model.ResponsibleRetailers)
         {
 
 
-            <a href="/Retailer/Details/@retailer.RetailerID">@retailer.RetailerName </a><span>Price: @retailer.ProductPrice </span> <a style="color:#ab2020;" href="/Product/Unassociate/@Model.SelectedProduct.ProductID?RetailerID=@retailer.RetailerID"></a><br />
+            <a href="/Retailer/Details/@retailer.RetailerID">@retailer.RetailerName </a><span>Price: @retailer.ProductPrice </span> <a style="color:#ab2020;" href="/Product/Unassociate/@Model.SelectedProduct.ProductID?RetailerID=@retailer.RetailerID">[x]</a><br>
         }
 
         

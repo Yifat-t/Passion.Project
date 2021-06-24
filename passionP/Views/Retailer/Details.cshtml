@@ -5,17 +5,35 @@
     ViewBag.Title = "View";
 }
 
-<a href="/Retailer/List">Go back to list</a>
-<br />
-<a href="/Retailer/Edit/@Model.SelectedRetailer.RetailerID">Update</a>
-<br />
-<a style="color:#ab2020;" href="/Retailer/DeleteConfirm/@Model.SelectedRetailer.RetailerID">Delete</a>
-<h2>@Model.SelectedRetailer.RetailerName</h2>
 
+
+<nav>
+    <ul style="margin-top: 5px;">
+
+        <div><button type="button" class="btn btn-primary"><a style="color:white;" href="/Retailer/List">Go Back To List</a></button></div>
+        <br />
+
+        <div><button type="button" class="btn btn-success"><a style="color:white;" href="/Retailer/Edit/@Model.SelectedRetailer.RetailerID">Update</a></button></div>
+        <br />
+
+        <div><button type="button" class="btn btn-danger"><a style="color:white;" href="/Retailer/DeleteConfirm/@Model.SelectedRetailer.RetailerID">Delete</a></button></div>
+    </ul>
+</nav>
+
+
+
+
+
+
+
+
+    <h2>@Model.SelectedRetailer.RetailerName</h2>
+
+    
 
 
 <div style="margin-top:100px;">
-    <h3>Products related to this brand</h3>
+    <h3>Products related to this retailer</h3>
     @foreach (var product in Model.SoldProducts)
     {
         <a href="/Product/Details/@product.ProductID">@product.ProductName</a>
