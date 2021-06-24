@@ -18,8 +18,31 @@ namespace passionP.Controllers
 
         static BrandController()
         {
-            client = new HttpClient();
+            HttpClientHandler handler = new HttpClientHandler()
+            {
+                AllowAutoRedirect = false,
+                UseCookies = false
+            };
+
+
+            client = new HttpClient(handler);
             client.BaseAddress = new Uri("https://localhost:44330/api/");
+        }
+
+        private void GetApplicationCookie()
+        {
+            string token = "";
+            client.DefaultRequestHeaders.Remove("Cookie");
+            if (!User.Identity.IsAuthenticated) return;
+
+            HttpCookie cookie = System.Web.HttpContext.Current.Request.Cookies.Get(".AspNet.ApplicationCookie");
+            if (cookie != null) token = cookie.Value;
+
+            Debug.WriteLine("Token Submitted is : " + token);
+            if (token != "") client.DefaultRequestHeaders.Add("Cookie", ".AspNet.ApplicationCookie=" + token);
+
+            return;
+
         }
         // GET: Brand/List
         public ActionResult List()
@@ -75,6 +98,7 @@ namespace passionP.Controllers
         }
 
         // GET: Brand/New
+        [Authorize]
         public ActionResult New()
         {
             //information about all brands in the system]
@@ -83,9 +107,11 @@ namespace passionP.Controllers
         }
 
         // POST: Brand/Create
+        [Authorize]
         [HttpPost]
         public ActionResult Create(Brand brand)
         {
+            GetApplicationCookie();
             Debug.WriteLine("the json payload is : ");
             //objective: add a new brand into our system using api
             //curl -H "Content-type:application/json -d @add.json https://localhost:44330/api/branddata/addbrand
@@ -113,6 +139,7 @@ namespace passionP.Controllers
         }
 
         // GET: Brand/Edit/5
+        [Authorize]
         public ActionResult Edit(int id)
         {
             
@@ -128,8 +155,10 @@ namespace passionP.Controllers
 
         // POST: Brand/Update/5
         [HttpPost]
+        [Authorize]
         public ActionResult Update(int id, Brand brand)
         {
+            GetApplicationCookie();
             string url = "branddata/updatebrand/" + id;
             string jsonpayload = jss.Serialize(brand);
             HttpContent content = new StringContent(jsonpayload);
@@ -147,8 +176,10 @@ namespace passionP.Controllers
         }
 
         // GET: Brand/Delete/5
+        [Authorize]
         public ActionResult DeleteConfirm(int id)
         {
+            GetApplicationCookie();
             string url = "branddata/findbrand/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
             BrandDto selectedbrand = response.Content.ReadAsAsync<BrandDto>().Result;
@@ -157,6 +188,7 @@ namespace passionP.Controllers
 
         // POST: Brand/Delete/5
         [HttpPost]
+        [Authorize]
         public ActionResult Delete(int id)
         {
             string url = "branddata/deletebrand/" + id;

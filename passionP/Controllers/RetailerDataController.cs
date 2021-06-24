@@ -69,14 +69,14 @@ namespace passionP.Controllers
                 r=>r.Products.Any(
                     a=>a.ProductID==id)
                 ).ToList();
-            List<RetailerDto> RetailerDto = new List<RetailerDto>();
+            List<RetailerProductDto> RetailerDto = new List<RetailerProductDto>();
 
-            Retailers.ForEach(r => RetailerDto.Add(new RetailerDto()
+            Retailers.ForEach(r => RetailerDto.Add(new RetailerProductDto()
             {
                 RetailerID = r.RetailerID,
                 RetailerName = r.RetailerName,
-
-
+                ProductID = id,
+                ProductPrice = db.RetailerProducts.Where(rp => rp.ProductID == id && rp.RetailerID == r.RetailerID).Single().Price
 
             }));
             return Ok(RetailerDto);
@@ -91,14 +91,15 @@ namespace passionP.Controllers
         /// </returns>
         /// <param name="id">Product Primary Key</param>
         /// <example>
-        /// GET: api/RetailersData/listretailersnotsellingthisproduct/1
+        /// GET: api/RetailersData/ListRetailersNotSellingThisProduct/1
         /// </example>
 
 
 
         [HttpGet]
         [ResponseType(typeof(RetailerDto))]
-        public IHttpActionResult listretailersnotsellingthisproduct(int id)
+        ///[Authorize]
+        public IHttpActionResult ListRetailersNotSellingThisProduct(int id)
         {
             List<Retailer> Retailers = db.Retailers.Where(
                 r => !r.Products.Any(
@@ -172,6 +173,7 @@ namespace passionP.Controllers
 
         [ResponseType(typeof(void))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult UpdateRetailer(int id, Retailer retailer)
         {
             if (!ModelState.IsValid)
@@ -224,6 +226,7 @@ namespace passionP.Controllers
         
         [ResponseType(typeof(Retailer))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult AddRetailer(Retailer retailer)
         {
             if (!ModelState.IsValid)
@@ -256,6 +259,7 @@ namespace passionP.Controllers
 
         [ResponseType(typeof(Retailer))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult DeleteRetailer(int id)
         {
             Retailer retailer = db.Retailers.Find(id);

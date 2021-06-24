@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Web;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -34,15 +36,26 @@ namespace passionP.Controllers
 
         [HttpGet]
         [ResponseType(typeof(ProductDto))]
-        public IHttpActionResult ListProducts()
+        public IHttpActionResult ListProducts(string SearchKey = null)
         {
-            List<Product> Products = db.Products.ToList();
+            List<Product> Products;
+
+            if (SearchKey != null)
+            {
+                Products = db.Products.Where(p => p.ProductName.Contains(SearchKey)).ToList();
+            } else
+            {
+                Products = db.Products.ToList();
+            }
+            
             List<ProductDto> ProductDtos = new List<ProductDto>();
 
             Products.ForEach(a => ProductDtos.Add(new ProductDto(){
                 ProductID = a.ProductID,
                 ProductName = a.ProductName,
                 Discontinued = a.Discontinued,
+                ProductHasPic = a.ProductHasPic,
+                PicExtension = a.PicExtension,
                 BrandName = a.Brand.BrandName
 
             }));
@@ -132,6 +145,7 @@ namespace passionP.Controllers
         /// </example>
         [HttpPost]
         [Route("api/ProductData/AssociateProductWithRetailer/{productid}/{retailerid}")]
+        [Authorize]
         public IHttpActionResult AssociateProductWithRetailer(int productid, int retailerid)
         {
 
@@ -149,7 +163,12 @@ namespace passionP.Controllers
             Debug.WriteLine("selected retailer name is: " + SelectedRetailer.RetailerName);
 
 
-            SelectedProduct.Retailers.Add(SelectedRetailer);
+            SelectedProduct.Retailers.Add(new RetailerProduct()
+            {
+                ProductID = productid,
+                RetailerID = retailerid,
+                Price = 0,
+            });
             db.SaveChanges();
 
             return Ok();
@@ -170,7 +189,8 @@ namespace passionP.Controllers
         /// </example>
         [HttpPost]
         [Route("api/ProductData/UnAssociateProductWithRetailer/{productid}/{retailerid}")]
-        
+        [Authorize]
+
         public IHttpActionResult UnAssociateProductWithRetailer(int productid, int retailerid)
         {
 
@@ -187,15 +207,19 @@ namespace passionP.Controllers
             Debug.WriteLine("input retailer id is: " + retailerid);
             Debug.WriteLine("selected retailer name is: " + SelectedRetailer.RetailerName);
 
+            RetailerProduct rp = SelectedProduct.Retailers.Where(r => r.ProductID == productid && r.RetailerID == retailerid).First();
 
-            SelectedProduct.Retailers.Remove(SelectedRetailer);
-            db.SaveChanges();
+            if (rp != null)
+            {
+                SelectedProduct.Retailers.Remove(rp);
+                db.SaveChanges();
+            }
 
             return Ok();
         }
 
         /// <summary>
-        /// Returns all animals in the system.
+        /// Returns all products in the system.
         /// </summary>
         /// <returns>
         /// HEADER: 200 (OK)
@@ -214,20 +238,21 @@ namespace passionP.Controllers
         public IHttpActionResult FindProduct(int id)
         {
             Product Product = db.Products.Find(id);
-                
-            if (Product == null)
-            {
-                return NotFound();
-            }
-
             ProductDto ProductDto = new ProductDto()
             {
                 ProductID = Product.ProductID,
                 ProductName = Product.ProductName,
                 Discontinued = Product.Discontinued,
+                ProductHasPic = Product.ProductHasPic,
+                PicExtension = Product.PicExtension,
                 BrandName = Product.Brand.BrandName
 
             };
+
+            if (Product == null)
+            {
+                return NotFound();
+            }           
 
             return Ok(ProductDto);
         }
@@ -253,6 +278,7 @@ namespace passionP.Controllers
         
         [ResponseType(typeof(void))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult UpdateProduct(int id, Product product)
         {
             if (!ModelState.IsValid)
@@ -266,6 +292,9 @@ namespace passionP.Controllers
             }
 
             db.Entry(product).State = EntityState.Modified;
+            // Picture update is handled by another method
+            db.Entry(product).Property(a => a.ProductHasPic).IsModified = false;
+            db.Entry(product).Property(a => a.PicExtension).IsModified = false;
 
             try
             {
@@ -286,6 +315,93 @@ namespace passionP.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+
+        /// <summary>
+        /// Receives product picture data, uploads it to the webserver and updates the product's HasPic option
+        /// </summary>
+        /// <param name="id">the product id</param>
+        /// <returns>status code 200 if successful.</returns>
+        /// <example>
+        /// POST: api/productData/UpdateproductPic/3
+        /// HEADER: enctype=multipart/form-data
+        /// FORM-DATA: image
+        /// </example>
+        
+
+        [HttpPost]
+        public IHttpActionResult UploadProductPic(int id)
+        {
+
+            bool haspic = false;
+            string picextension;
+            if (Request.Content.IsMimeMultipartContent())
+            {
+                Debug.WriteLine("Received multipart form data.");
+
+                int numfiles = HttpContext.Current.Request.Files.Count;
+                Debug.WriteLine("Files Received: " + numfiles);
+
+                //Check if a file is posted
+                if (numfiles == 1 && HttpContext.Current.Request.Files[0] != null)
+                {
+                    var productPic = HttpContext.Current.Request.Files[0];
+                    //Check if the file is empty
+                    if (productPic.ContentLength > 0)
+                    {
+                        //establish valid file types (can be changed to other file extensions if desired!)
+                        var valtypes = new[] { "jpeg", "jpg", "png", "gif" };
+                        var extension = Path.GetExtension(productPic.FileName).Substring(1);
+                        //Check the extension of the file
+                        if (valtypes.Contains(extension))
+                        {
+                            try
+                            {
+                                //file name is the id of the image
+                                string fn = id + "." + extension;
+
+                                //get a direct file path to ~/Content/products/{id}.{extension}
+                                string path = Path.Combine(HttpContext.Current.Server.MapPath("~/Content/Images/Products/"), fn);
+
+                                //save the file
+                                productPic.SaveAs(path);
+
+                                //if these are all successful then we can set these fields
+                                haspic = true;
+                                picextension = extension;
+
+                                //Update the product haspic and picextension fields in the database
+                                Product Selectedproduct = db.Products.Find(id);
+                                Selectedproduct.ProductHasPic = haspic;
+                                Selectedproduct.PicExtension = extension;
+                                db.Entry(Selectedproduct).State = EntityState.Modified;
+
+                                db.SaveChanges();
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("product Image was not saved successfully.");
+                                Debug.WriteLine("Exception:" + ex);
+                                return BadRequest();
+                            }
+                        }
+                    }
+
+                }
+
+                return Ok();
+            }
+            else
+            {
+                //not multipart form data
+                return BadRequest();
+
+            }
+
+        }
+
+
+
         /// <summary>
         /// Adds a product to the system
         /// </summary>
@@ -302,9 +418,10 @@ namespace passionP.Controllers
         /// </example>
 
 
-     
+
         [ResponseType(typeof(Product))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult AddProduct(Product product)
         {
             if (!ModelState.IsValid)
@@ -335,6 +452,7 @@ namespace passionP.Controllers
 
         [ResponseType(typeof(Product))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult DeleteProduct(int id)
         {
             Product product = db.Products.Find(id);
@@ -342,11 +460,20 @@ namespace passionP.Controllers
             {
                 return NotFound();
             }
+            if (product.ProductHasPic && product.PicExtension != "")
+            {
+                //also delete image from path
+                string path = HttpContext.Current.Server.MapPath("~/Content/Images/Products/" + id + "." + product.PicExtension);
+                if (System.IO.File.Exists(path))
+                {
+                    Debug.WriteLine("File exists... preparing to delete!");
+                    System.IO.File.Delete(path);
+                }
+            }
+                    db.Products.Remove(product);
+                    db.SaveChanges();
 
-            db.Products.Remove(product);
-            db.SaveChanges();
-
-            return Ok();
+                     return Ok();
         }
 
         protected override void Dispose(bool disposing)

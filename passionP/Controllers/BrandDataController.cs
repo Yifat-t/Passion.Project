@@ -104,6 +104,7 @@ namespace passionP.Controllers
         // POST: api/BrandData/UpdateBrand/5
         [ResponseType(typeof(void))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult UpdateBrand(int id, Brand brand)
         {
             if (!ModelState.IsValid)
@@ -155,6 +156,7 @@ namespace passionP.Controllers
        
         [ResponseType(typeof(Brand))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult AddBrand(Brand brand)
         {
             if (!ModelState.IsValid)
@@ -186,6 +188,7 @@ namespace passionP.Controllers
       
         [ResponseType(typeof(Brand))]
         [HttpPost]
+        [Authorize]
         public IHttpActionResult DeleteBrand(int id)
         {
             Brand brand = db.Brands.Find(id);

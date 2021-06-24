@@ -19,8 +19,31 @@ namespace passionP.Controllers
 
         static RetailerController()
         {
-            client = new HttpClient();
+            HttpClientHandler handler = new HttpClientHandler()
+            {
+                AllowAutoRedirect = false,
+                UseCookies = false
+            };
+
+
+            client = new HttpClient(handler);
             client.BaseAddress = new Uri("https://localhost:44330/api/");
+        }
+
+        private void GetApplicationCookie()
+        {
+            string token = "";
+            client.DefaultRequestHeaders.Remove("Cookie");
+            if (!User.Identity.IsAuthenticated) return;
+
+            HttpCookie cookie = System.Web.HttpContext.Current.Request.Cookies.Get(".AspNet.ApplicationCookie");
+            if (cookie != null) token = cookie.Value;
+
+            Debug.WriteLine("Token Submitted is : " + token);
+            if (token != "") client.DefaultRequestHeaders.Add("Cookie", ".AspNet.ApplicationCookie=" + token);
+
+            return;
+
         }
 
         // GET: Retailer/List
@@ -82,6 +105,7 @@ namespace passionP.Controllers
         }
 
         // GET: Retailer/New
+        [Authorize]
         public ActionResult New()
         {
             return View();
@@ -89,8 +113,10 @@ namespace passionP.Controllers
 
         // POST: Retailer/Create
         [HttpPost]
+        [Authorize]
         public ActionResult Create(Retailer Retailer)
         {
+            GetApplicationCookie();
             Debug.WriteLine("the json payload is :");
             //Debug.WriteLine(Retailer.RetailerName);
             //objective: add a new Retailer into our system using the API
@@ -118,6 +144,7 @@ namespace passionP.Controllers
         }
 
         // GET: Retailer/Edit/5
+        [Authorize]
         public ActionResult Edit(int id)
         {
             string url = "retailerdata/findretailer/" + id;
@@ -127,10 +154,12 @@ namespace passionP.Controllers
         }
 
         // POST: Retailer/Update/5
+        [Authorize]
         [HttpPost]
         public ActionResult Update(int id, Retailer Retailer)
         {
 
+            GetApplicationCookie();
             string url = "retailerdata/updateretailer/" + id;
             string jsonpayload = jss.Serialize(Retailer);
             HttpContent content = new StringContent(jsonpayload);
@@ -148,6 +177,7 @@ namespace passionP.Controllers
         }
 
         // GET: Retailer/Delete/5
+        [Authorize]
         public ActionResult DeleteConfirm(int id)
         {
             string url = "retailerdata/findretailer/" + id;
@@ -158,8 +188,10 @@ namespace passionP.Controllers
 
         // POST: Retailer/Delete/5
         [HttpPost]
+        [Authorize]
         public ActionResult Delete(int id)
         {
+            GetApplicationCookie();
             string url = "retailerdata/deleteretailer/" + id;
             HttpContent content = new StringContent("");
             content.Headers.ContentType.MediaType = "application/json";
