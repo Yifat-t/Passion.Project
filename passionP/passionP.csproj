@@ -224,6 +224,18 @@
     <Compile Include="Migrations\202106040253084_product-retailer.Designer.cs">
       <DependentUpon>202106040253084_product-retailer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202106211845042_pictures.cs" />
+    <Compile Include="Migrations\202106211845042_pictures.Designer.cs">
+      <DependentUpon>202106211845042_pictures.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106221613388_RetailerProductPrice.cs" />
+    <Compile Include="Migrations\202106221613388_RetailerProductPrice.Designer.cs">
+      <DependentUpon>202106221613388_RetailerProductPrice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106221700551_retailerproduct.cs" />
+    <Compile Include="Migrations\202106221700551_retailerproduct.Designer.cs">
+      <DependentUpon>202106221700551_retailerproduct.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Brand.cs" />
@@ -231,6 +243,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\Retailer.cs" />
+    <Compile Include="Models\RetailerProduct.cs" />
     <Compile Include="Models\Review.cs" />
     <Compile Include="Models\ViewModels\DetailsBrand.cs" />
     <Compile Include="Models\ViewModels\DetailsProduct.cs" />
@@ -244,6 +257,12 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\Products\10.jpg" />
+    <Content Include="Content\Images\Products\11.png" />
+    <Content Include="Content\Images\Products\15.jpg" />
+    <Content Include="Content\Images\Products\2.jpg" />
+    <Content Include="Content\Images\Products\4.JPG" />
+    <Content Include="Content\Images\Products\default.JPG" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -317,6 +336,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Images\Brands\" />
+    <Folder Include="Content\Images\Retailers\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -355,6 +376,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202106040253084_product-retailer.resx">
       <DependentUpon>202106040253084_product-retailer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106211845042_pictures.resx">
+      <DependentUpon>202106211845042_pictures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106221613388_RetailerProductPrice.resx">
+      <DependentUpon>202106221613388_RetailerProductPrice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106221700551_retailerproduct.resx">
+      <DependentUpon>202106221700551_retailerproduct.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
