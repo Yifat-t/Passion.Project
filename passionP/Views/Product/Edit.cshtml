@@ -1,0 +1,58 @@
+﻿@model passionP.Models.ViewModels.UpdateProduct
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Update Product</h2>
+<form action="/Product/Update/@Model.SelectedProduct.ProductID" method="POST" enctype = "multipart/form-data">
+    <div style="display:none;">
+        
+        <input type="text" name="ProductID" value="@Model.SelectedProduct.ProductID" />
+    </div>
+    <div>
+        <label>Name:</label> <input type="text" name="ProductName" value="@Model.SelectedProduct.ProductName" />
+    </div>
+    <div>
+        <label>Discontinued:</label> <input type="checkbox" name="Discontinued" value="@Model.SelectedProduct.Discontinued" />
+    </div>
+    <div>
+        <label>Brand ID:</label>
+
+        <select name="BrandID">
+            @foreach (var brand in Model.BrandOptions)
+            {
+                string selected = "";
+                if (brand.BrandID == Model.SelectedProduct.ProductID)
+                {
+                    selected = "selected";
+                }
+                <option value="@brand.BrandID" @selected>@brand.BrandName</option>
+
+            }
+
+        </select>
+        
+
+        <div class="col-md-6 col-sm-12">
+            <input type="file" name="ProductPic" />
+        </div> 
+    </div>
+    <div>
+        <input type="submit" value="Update Product" />
+
+    </div>
+</form>
+<div>
+    <h4>Add new Retailer that sell this product @Model.SelectedProduct.ProductName</h4>
+    <form method="POST" action="/Product/Associate/@Model.SelectedProduct.ProductID">
+        <select name="RetailerID">
+            @foreach (var retailer in Model.AvailableRetailers)
+            {
+                <option value="@retailer.RetailerID">@retailer.RetailerName </option>
+            }
+
+        </select>
+        <input type="submit" value="Associate Retailer" />
+    </form>
+</div>

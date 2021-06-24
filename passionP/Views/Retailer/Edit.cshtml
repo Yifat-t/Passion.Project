@@ -1,0 +1,21 @@
+﻿@model passionP.Models.RetailerDto
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Update Retailer</h2>
+<form action="/Retailer/Update/@Model.RetailerID" method="POST">
+    <div style="display:none;">
+        @* Pass through the Retailer ID *@
+        <input type="text" name="RetailerID" value="@Model.RetailerID" />
+    </div>
+    <div>
+        <label>Name:</label> <input type="text" name="RetailerName" value="@Model.RetailerName" />
+    </div>
+    
+    <div>
+        <input type="submit" value="Update Retailer" />
+
+    </div>
+</form>

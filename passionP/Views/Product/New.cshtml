@@ -1,0 +1,31 @@
+﻿@model IEnumerable<passionP.Models.BrandDto>
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create Product</h2>
+
+<form action="/Product/Create" method="POST">
+    <div>
+        <label>Product Description:</label> <input type="text" name="ProductName" />
+    </div>
+    <div>
+        <label>Discontinued:</label> <input type="checkbox" name="Discontinued" />
+    </div>
+    <div>
+        <label>Product Brand:</label> 
+            <select name="BrandID">
+                @foreach (var brand in Model)
+                {
+                    <option value="@brand.BrandID">@brand.BrandName</option>
+
+                }
+            </select>
+    </div>
+    <div>
+        <input type="submit" value="Add Product" />
+
+    </div>
+
+
+</form>

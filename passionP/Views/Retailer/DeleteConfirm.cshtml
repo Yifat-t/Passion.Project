@@ -1,0 +1,13 @@
+﻿@model passionP.Models.RetailerDto
+
+@{
+    ViewBag.Title = "DeleteConfirm";
+}
+
+<h2>Are you sure you want to delete this retailer?</h2>
+<a href="/Retailer/List">Cancel</a>
+<h3>Name: @Model.RetailerName</h3>
+
+<form action="/Retailer/Delete/@Model.RetailerID" method="POST">
+    <input type="submit" value="Confirm Delete" />
+</form>
