@@ -16,6 +16,14 @@ namespace passionP.Models
         public string ProductName { get; set; }
         public bool Discontinued { get; set; }
 
+        //data needed for keeping track of product images uploaded
+        //images deposited into /Content/Images/Products/{id}.{extension}
+
+
+        public bool ProductHasPic { get; set; }
+
+        public string PicExtension { get; set; }
+
         [ForeignKey("Brand")]
         public int BrandID { get; set; }
         public virtual Brand Brand { get; set; }
@@ -23,7 +31,7 @@ namespace passionP.Models
         //A product can have many reviews
         //A product can have many retailers
         public ICollection<Review> Reviews { get; set; }
-        public ICollection<Retailer> Retailers { get; set; }
+        public ICollection<RetailerProduct> Retailers { get; set; }
 
 
     }
@@ -35,6 +43,12 @@ namespace passionP.Models
         public string BrandName { get; set; }
 
         public bool Discontinued { get; set; }
+
+         public int Price { get; set; }
+        //data needed for keeping track of products images uploaded
+        //images deposited into /Content/Images/Products/{id}.{extension}
+        public bool ProductHasPic { get; set; }
+        public string PicExtension { get; set; }
     }
 
 }

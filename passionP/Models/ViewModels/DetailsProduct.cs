@@ -11,9 +11,10 @@ namespace passionP.Models.ViewModels
         public ProductDto SelectedProduct { get; set; }
 
         //all of the Unvailable Retailers (Responsible Retailers) to that particular product
-        public IEnumerable<RetailerDto> ResponsibleRetailers { get; set; }
+        public IEnumerable<RetailerProductDto> ResponsibleRetailers { get; set; }
 
         //all of the Available Retailers to that particular product
         public IEnumerable<RetailerDto> AvailableRetailers { get; set; }
+
     }
 }

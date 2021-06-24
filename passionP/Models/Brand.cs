@@ -15,6 +15,13 @@ namespace passionP.Models
         public string BrandName { get; set; }
         public ICollection<Product> Products { get; set; }
 
+        //data needed for keeping track of brand images uploaded
+        //images deposited into /Content/Images/Brands/{id}.{extension}
+
+        public bool BrandHasPic { get; set; }
+
+        public string PicExtension { get; set; }
+
 
     }
     public class BrandDto

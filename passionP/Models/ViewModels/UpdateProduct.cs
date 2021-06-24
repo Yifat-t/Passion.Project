@@ -14,5 +14,8 @@ namespace passionP.Models.ViewModels
        
         //the assosiated brand with the update product.
         public IEnumerable<BrandDto> BrandOptions { get; set; }
+        public IEnumerable<RetailerDto> AvailableRetailers { get; set; }
+
+
     }
 }

@@ -31,6 +31,7 @@ namespace passionP.Models
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Retailer> Retailers { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<RetailerProduct> RetailerProducts { get; set; }
 
         public static ApplicationDbContext Create()
         {
